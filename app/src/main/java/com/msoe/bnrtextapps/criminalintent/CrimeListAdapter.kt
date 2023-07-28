@@ -1,5 +1,7 @@
 package com.msoe.bnrtextapps.criminalintent
 
+import android.icu.text.DateFormat
+import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +15,11 @@ class CrimeHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(crime: Crime) {
         binding.crimeTitle.text = crime.title
-        binding.crimeDate.text = crime.date.toString()
+        val dateString = binding.root.context.getString(R.string.formatted_crime_data).format(
+            DateFormat.getPatternInstance(DateFormat.WEEKDAY).format(crime.date),
+            DateFormat.getDateInstance(DateFormat.LONG).format(crime.date)
+        )
+        binding.crimeDate.text = dateString
 
         binding.root.setOnClickListener {
             Toast.makeText(
