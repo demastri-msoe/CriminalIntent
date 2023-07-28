@@ -1,10 +1,13 @@
 package com.msoe.bnrtextapps.criminalintent
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.msoe.bnrtextapps.criminalintent.database.CrimeDatabase
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
+
+private const val TAG = "CrimeRepository"
 
 private const val DATABASE_NAME = "crime-database"
 
@@ -19,7 +22,10 @@ class CrimeRepository private constructor(context: Context) {
         .createFromAsset(DATABASE_NAME)
         .build()
 
-    fun getCrimes(): Flow<List<Crime>> = database.crimeDao().getCrimes()
+    fun getCrimes(): Flow<List<Crime>> {
+        Log.d(TAG, "in Repo:getCrimes()")
+        return database.crimeDao().getCrimes()
+    }
 
     suspend fun getCrime(id: UUID): Crime = database.crimeDao().getCrime(id)
 
