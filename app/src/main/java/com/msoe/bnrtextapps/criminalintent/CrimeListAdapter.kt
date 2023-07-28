@@ -1,5 +1,6 @@
 package com.msoe.bnrtextapps.criminalintent
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.msoe.bnrtextapps.criminalintent.databinding.ListItemCrimeBinding
+
+private const val TAG = "CrimeListAdapter"
 
 class CrimeHolder(
     val binding: ListItemCrimeBinding
@@ -39,12 +42,16 @@ class CrimeListAdapter(
         parent: ViewGroup,
         viewType: Int
     ) : CrimeHolder {
+        Log.d(TAG, "In CreateViewHolder")
+
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListItemCrimeBinding.inflate(inflater, parent, false)
         return CrimeHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
+        Log.d(TAG, "In BindViewHolder")
+
         val crime = crimes[position]
         holder.bind(crime)
     }
