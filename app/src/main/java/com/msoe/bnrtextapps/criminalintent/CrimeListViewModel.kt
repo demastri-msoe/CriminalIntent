@@ -14,22 +14,10 @@ import kotlin.coroutines.CoroutineContext
 private const val TAG = "CrimeListViewModel"
 class CrimeListViewModel : ViewModel() {
     private val crimeRepository = CrimeRepository.get()
-    val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
 
-    val crimes = mutableListOf<Crime>()
+    val crimes = crimeRepository.getCrimes()
 
     init {
-        Log.d(TAG, "init starting")
-        CoroutineScope(coroutineContext).launch {
-            Log.d(TAG, "coroutine launched")
-            crimes += loadCrimes()
-            Log.d(TAG, "Loading crimes finished ("+crimes.size+")")
-        }
-    }
-
-
-    suspend fun loadCrimes(): List<Crime> {
-        return crimeRepository.getCrimes()
+        viewModelScope.launch {  }
     }
 }

@@ -44,11 +44,15 @@ class CrimeListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var crimes: List<Crime> = emptyList()
-
-        binding.crimeRecyclerView.adapter =
-            CrimeListAdapter(crimeListViewModel.crimes)
-        Log.d(TAG, "Total crimes: ${crimeListViewModel.crimes.size}")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Log.d(TAG, "about to collect crimes")
+                crimeListViewModel.crimes.collect { crimes ->
+                    binding.crimeRecyclerView.adapter =
+                        CrimeListAdapter(crimes)
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
