@@ -14,16 +14,12 @@ private const val TAG = "CrimeListAdapter"
 class CrimeHolder(
     val binding: ListItemCrimeBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(crime: Crime) {
+    fun bind(crime: Crime, onCrimeClicked: () -> Unit) {
         binding.crimeTitle.text = crime.title
         binding.crimeDate.text = crime.date.toString()
 
         binding.root.setOnClickListener {
-            Toast.makeText(
-                binding.root.context,
-                "${crime.title} clicked!",
-                Toast.LENGTH_SHORT
-            ).show()
+            onCrimeClicked()
         }
 
         binding.crimeSolved.visibility = if (crime.isSolved) {
@@ -35,7 +31,8 @@ class CrimeHolder(
 }
 
 class CrimeListAdapter(
-    private val crimes: List<Crime>
+    private val crimes: List<Crime>,
+    private val onCrimeClicked: () -> Unit
 ) : RecyclerView.Adapter<CrimeHolder>() {
 
     override fun onCreateViewHolder(
@@ -53,7 +50,7 @@ class CrimeListAdapter(
         Log.d(TAG, "In BindViewHolder")
 
         val crime = crimes[position]
-        holder.bind(crime)
+        holder.bind(crime,onCrimeClicked)
     }
 
     override fun getItemCount() = crimes.size
