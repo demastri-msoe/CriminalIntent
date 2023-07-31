@@ -8,18 +8,19 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.msoe.bnrtextapps.criminalintent.databinding.ListItemCrimeBinding
+import java.util.UUID
 
 private const val TAG = "CrimeListAdapter"
 
 class CrimeHolder(
     val binding: ListItemCrimeBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(crime: Crime, onCrimeClicked: () -> Unit) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId:UUID) -> Unit) {
         binding.crimeTitle.text = crime.title
         binding.crimeDate.text = crime.date.toString()
 
         binding.root.setOnClickListener {
-            onCrimeClicked()
+            onCrimeClicked(crime.id)
         }
 
         binding.crimeSolved.visibility = if (crime.isSolved) {
@@ -32,7 +33,7 @@ class CrimeHolder(
 
 class CrimeListAdapter(
     private val crimes: List<Crime>,
-    private val onCrimeClicked: () -> Unit
+    private val onCrimeClicked: (crimeId:UUID) -> Unit
 ) : RecyclerView.Adapter<CrimeHolder>() {
 
     override fun onCreateViewHolder(

@@ -50,9 +50,10 @@ class CrimeListFragment : Fragment() {
                 Log.d(TAG, "about to collect crimes")
                 crimeListViewModel.crimes.collect { crimes ->
                     binding.crimeRecyclerView.adapter =
-                        CrimeListAdapter(crimes) {
+                        CrimeListAdapter(crimes) {crimeId ->
                             findNavController().navigate(
-                                CrimeListFragmentDirections.showCrimeDetail()                            )
+                                CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                            )
                         }
                 }
             }
