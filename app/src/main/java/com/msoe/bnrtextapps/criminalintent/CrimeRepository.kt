@@ -20,6 +20,7 @@ class CrimeRepository private constructor(context: Context) {
             DATABASE_NAME
         )
         .createFromAsset(DATABASE_NAME)
+        .allowMainThreadQueries()
         .build()
 
     fun getCrimes(): Flow<List<Crime>> {
