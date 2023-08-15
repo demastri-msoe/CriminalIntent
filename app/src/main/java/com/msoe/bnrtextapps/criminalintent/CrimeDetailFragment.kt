@@ -4,15 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
+
 
 private const val TAG = "CrimeDetailFragment"
 class CrimeDetailFragment : Fragment() {
@@ -35,6 +39,26 @@ class CrimeDetailFragment : Fragment() {
     ): View? {
         _binding =
             FragmentCrimeDetailBinding.inflate(inflater, container, false)
+
+        // This callback is only called when MyFragment is at least started
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object:OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                binding.apply {
+                    if (crimeTitle.text.toString().trim() == "") {
+                        val snackbar = getView()?.let {
+                            Snackbar
+                                .make(it, "Please supply a title for the crime...", Snackbar.LENGTH_LONG)
+                        }
+                        snackbar?.show()
+                    } else {
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+            }
+        )
+
         return binding.root
     }
 
