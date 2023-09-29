@@ -1,5 +1,6 @@
 package com.msoe.bnrtextapps.criminalintent
 
+import android.icu.text.DateFormat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -84,10 +85,20 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = crime.date.toString()
+
+            val dFormat = DateFormat.getDateInstance()
+            crimeDate.text = dFormat.format(crime.date.time)
             crimeDate.setOnClickListener {
                 findNavController().navigate(
                     CrimeDetailFragmentDirections.selectDate(crime.date)
+                )
+            }
+
+            val tFormat = DateFormat.getTimeInstance()
+            crimeTime.text = tFormat.format(crime.date.time)
+            crimeTime.setOnClickListener {
+                findNavController().navigate(
+                    CrimeDetailFragmentDirections.selectTime(crime.date)
                 )
             }
             crimeSolved.isChecked = crime.isSolved
