@@ -1,5 +1,6 @@
 package com.msoe.bnrtextapps.criminalintent
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +20,8 @@ import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
@@ -49,6 +52,10 @@ class CrimeListFragment : Fragment() {
         _binding = FragmentCrimeListBinding.inflate(inflater, container, false)
         binding.crimeRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        binding.addCrimeButton.setOnClickListener {_ ->
+            showNewCrime()
+        }
+
         return binding.root
     }
 
@@ -65,6 +72,15 @@ class CrimeListFragment : Fragment() {
                                 CrimeListFragmentDirections.showCrimeDetail(crimeId)
                             )
                         }
+                    if( crimes.size  == 0 ) {
+                        binding.crimeRecyclerView.visibility = View.GONE
+                        binding.emptyMessage.visibility = View.VISIBLE
+                        binding.addCrimeButton.visibility = View.VISIBLE
+                    } else {
+                        binding.crimeRecyclerView.visibility = View.VISIBLE
+                        binding.emptyMessage.visibility = View.GONE
+                        binding.addCrimeButton.visibility = View.GONE
+                    }
                 }
             }
         }
