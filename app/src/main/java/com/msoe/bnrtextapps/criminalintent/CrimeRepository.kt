@@ -40,6 +40,11 @@ class CrimeRepository private constructor(
             database.crimeDao().updateCrime(crime)
         }
     }
+    fun deleteCrime(crime: Crime) {
+        coroutineScope.launch {
+            database.crimeDao().deleteCrime(crime)
+        }
+    }
 
     suspend fun addCrime(crime: Crime) {
             database.crimeDao().addCrime(crime)

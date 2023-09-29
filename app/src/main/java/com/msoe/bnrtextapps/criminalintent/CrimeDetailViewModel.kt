@@ -14,14 +14,19 @@ import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+
 private const val TAG = "CrimeDetailViewModel"
+
 class CrimeDetailViewModel(crimeId: UUID) : ViewModel() {
     private val crimeRepository = CrimeRepository.get()
+    public var doDelete = false
 
     private val _crime: MutableStateFlow<Crime?> = MutableStateFlow(null)
     val crime: StateFlow<Crime?> = _crime.asStateFlow()
 
     init {
+        doDelete = false
+
         viewModelScope.launch {
             _crime.value = crimeRepository.getCrime(crimeId)
         }
@@ -32,6 +37,10 @@ class CrimeDetailViewModel(crimeId: UUID) : ViewModel() {
         _crime.update { oldCrime ->
             oldCrime?.let { onUpdate(it) }
         }
+    }
+
+    fun deleteCrime(onUpdate: (Crime) -> Crime) {
+        crime.value?.let { crimeRepository.deleteCrime(it) }
     }
 
     override fun onCleared() {

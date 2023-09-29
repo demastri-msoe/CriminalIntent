@@ -3,6 +3,9 @@ package com.msoe.bnrtextapps.criminalintent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
@@ -17,14 +20,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.Date
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
+import java.util.UUID
 
 private const val TAG = "CrimeDetailFragment"
+
 class CrimeDetailFragment : Fragment() {
 
     private var _binding: FragmentCrimeDetailBinding? = null
@@ -36,6 +36,11 @@ class CrimeDetailFragment : Fragment() {
 
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -83,6 +88,7 @@ class CrimeDetailFragment : Fragment() {
         }
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -102,5 +108,28 @@ class CrimeDetailFragment : Fragment() {
             }
             crimeSolved.isChecked = crime.isSolved
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_detail, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.new_crime -> {
+                deleteThisCrime()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun deleteThisCrime() {
+        crimeDetailViewModel.deleteCrime { it }
+        findNavController().navigate(
+            CrimeDetailFragmentDirections.backToCrimeList()
+        )
     }
 }
