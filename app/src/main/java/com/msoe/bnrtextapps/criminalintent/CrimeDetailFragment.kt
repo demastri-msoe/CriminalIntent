@@ -1,5 +1,6 @@
 package com.msoe.bnrtextapps.criminalintent
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
+import java.text.DateFormat
 import java.util.Date
 
 private const val TAG = "CrimeDetailFragment"
@@ -91,6 +93,32 @@ class CrimeDetailFragment : Fragment() {
                 )
             }
             crimeSolved.isChecked = crime.isSolved
+
+            crimeReport.setOnClickListener {
+                val reportIntent =Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject))
+                }
+
+                startActivity(reportIntent)
+            }
         }
+    }
+    private fun getCrimeReport(crime: Crime): String {
+        val solvedString = if (crime.isSolved) {
+            getString(R.string.crime_report_solved)
+        } else {
+            getString(R.string.crime_report_unsolved)
+        }
+        val dateString = DateFormat.getDateInstance().format(crime.date).toString()
+        val suspectText = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect)
+        }
+        return getString(R.string.crime_report, crime.title, dateString, solvedString, suspectText)
     }
 }

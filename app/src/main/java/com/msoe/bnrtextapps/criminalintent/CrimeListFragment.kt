@@ -1,6 +1,7 @@
 package com.msoe.bnrtextapps.criminalintent
 
 import android.os.Bundle
+import android.provider.Settings.System.DATE_FORMAT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.DateFormat
 import java.util.Date
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
@@ -60,7 +62,7 @@ class CrimeListFragment : Fragment() {
                 Log.d(TAG, "about to collect crimes")
                 crimeListViewModel.crimes.collect { crimes ->
                     binding.crimeRecyclerView.adapter =
-                        CrimeListAdapter(crimes) {crimeId ->
+                        CrimeListAdapter(crimes) { crimeId ->
                             findNavController().navigate(
                                 CrimeListFragmentDirections.showCrimeDetail(crimeId)
                             )
@@ -86,6 +88,7 @@ class CrimeListFragment : Fragment() {
                 showNewCrime()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
