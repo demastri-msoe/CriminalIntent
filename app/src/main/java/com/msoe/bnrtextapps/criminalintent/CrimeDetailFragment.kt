@@ -168,7 +168,7 @@ class CrimeDetailFragment : Fragment() {
     }
     private fun canResolveIntent(intent:Intent): Boolean {
         val packageManager: PackageManager =requireActivity().packageManager
-        intent.addCategory(Intent.CATEGORY_HOME)    // ensures no apps, comment out for normal use
+        //intent.addCategory(Intent.CATEGORY_HOME)    // ensures no apps, comment out for normal use
         val resolvedActivity: ResolveInfo? =
             packageManager.resolveActivity(
                 intent,
