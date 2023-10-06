@@ -79,6 +79,14 @@ class CrimeDetailFragment : Fragment() {
                 null
             )
             crimeSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
+
+            callSuspect.setOnClickListener {
+                // set up READ_CONTACTS permissions to query fof additional data
+                // get the contactID for this contact
+                // get the phone for the contact
+                // create implicit intent for phone URI
+                // call using ACTION_DIAL or ACTION_CALL
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
