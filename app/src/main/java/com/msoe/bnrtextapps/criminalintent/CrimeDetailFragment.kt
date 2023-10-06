@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import java.text.DateFormat
 import java.util.Date
 
 private const val TAG = "CrimeDetailFragment"
+
 class CrimeDetailFragment : Fragment() {
 
     private var _binding: FragmentCrimeDetailBinding? = null
@@ -51,7 +53,7 @@ class CrimeDetailFragment : Fragment() {
     private val takePhoto = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { didTakePhoto: Boolean ->
-        if( didTakePhoto && photoName != null) {
+        if (didTakePhoto && photoName != null) {
             crimeDetailViewModel.updateCrime { oldCrime ->
                 oldCrime.copy(photoFileName = photoName)
             }
@@ -60,6 +62,7 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private var photoName: String? = null
+    private var oldPhotoFileName: String? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -102,15 +105,44 @@ class CrimeDetailFragment : Fragment() {
             crimeCamera.isEnabled = canResolveIntent(captureImageIntent)
 
             crimeCamera.setOnClickListener {
-                photoName = "IMG#{Date()}.JPG"
-                val photoFile = File(requireContext().applicationContext.filesDir,
-                photoName)
-                val photoUri =FileProvider.getUriForFile(
+                photoName = "IMG${Date()}.JPG"
+                Log.d(TAG, "in listener - would capture new image at: " + photoName)
+                val photoFile = File(
+                    requireContext().applicationContext.filesDir,
+                    photoName
+                )
+                val photoUri = FileProvider.getUriForFile(
                     requireContext(),
                     "com.msoe.bnrtextapps.criminalintent.fileprovider",
                     photoFile
                 )
                 takePhoto.launch(photoUri)
+            }
+            crimePhoto.setOnClickListener {
+                Log.d(
+                    TAG, "in listener - fn is: "
+                            + (if (photoName == null) "null" else photoName)
+                            + " oldFn:" + (if (oldPhotoFileName == null) "null" else oldPhotoFileName)
+                )
+                var photoToShow = photoName
+                if (photoName == null && oldPhotoFileName != null)
+                    photoToShow = oldPhotoFileName
+
+                if (photoToShow != null) {
+                    val photoFile = File(
+                        requireContext().applicationContext.filesDir,
+                        photoToShow
+                    )
+                    val photoUri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "com.msoe.bnrtextapps.criminalintent.fileprovider",
+                        photoFile
+                    )
+
+                    findNavController().navigate(
+                        CrimeDetailFragmentDirections.showImage(photoUri)
+                    )
+                }
             }
         }
 
@@ -131,6 +163,7 @@ class CrimeDetailFragment : Fragment() {
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -150,12 +183,13 @@ class CrimeDetailFragment : Fragment() {
             crimeSolved.isChecked = crime.isSolved
 
             crimeReport.setOnClickListener {
-                val reportIntent =Intent(Intent.ACTION_SEND).apply {
+                val reportIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
                     putExtra(
                         Intent.EXTRA_SUBJECT,
-                        getString(R.string.crime_report_subject))
+                        getString(R.string.crime_report_subject)
+                    )
                 }
 
                 val chooserIntent = Intent.createChooser(
@@ -170,8 +204,10 @@ class CrimeDetailFragment : Fragment() {
                 getString(R.string.crime_suspect_text)
             }
             updatePhoto(crime.photoFileName)
+            oldPhotoFileName = crime.photoFileName
         }
     }
+
     private fun getCrimeReport(crime: Crime): String {
         val solvedString = if (crime.isSolved) {
             getString(R.string.crime_report_solved)
@@ -187,22 +223,23 @@ class CrimeDetailFragment : Fragment() {
         return getString(R.string.crime_report, crime.title, dateString, solvedString, suspectText)
     }
 
-    private fun parseContactSelection(contactUri:Uri) {
+    private fun parseContactSelection(contactUri: Uri) {
         val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
 
-        val queryCursor =requireActivity().contentResolver
+        val queryCursor = requireActivity().contentResolver
             .query(contactUri, queryFields, null, null, null)
 
         queryCursor?.use { cursor ->
-            if( cursor.moveToFirst()) {
+            if (cursor.moveToFirst()) {
                 val suspect = cursor.getString(0)
                 crimeDetailViewModel.updateCrime { oldCrime -> oldCrime.copy(suspect = suspect) }
             }
 
         }
     }
-    private fun canResolveIntent(intent:Intent): Boolean {
-        val packageManager: PackageManager =requireActivity().packageManager
+
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
         //intent.addCategory(Intent.CATEGORY_HOME)    // ensures no apps, comment out for normal use
         val resolvedActivity: ResolveInfo? =
             packageManager.resolveActivity(
@@ -213,7 +250,7 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private fun updatePhoto(photoFileName: String?) {
-        if( binding.crimePhoto.tag != photoFileName) {
+        if (binding.crimePhoto.tag != photoFileName) {
             val photoFile = photoFileName?.let {
                 File(requireContext().applicationContext.filesDir, it)
             }
