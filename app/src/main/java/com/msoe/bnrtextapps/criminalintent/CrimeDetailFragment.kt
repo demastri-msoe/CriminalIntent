@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.text.format.DateFormat.getDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,12 @@ import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeDetailBindin
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.DateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofLocalizedDateTime
+import java.time.format.FormatStyle
 import java.util.Date
 
 private const val TAG = "CrimeDetailFragment"
@@ -141,7 +148,7 @@ class CrimeDetailFragment : Fragment() {
             if (crimeTitle.text.toString() != crime.title) {
                 crimeTitle.setText(crime.title)
             }
-            crimeDate.text = crime.date.toString()
+            crimeDate.text = DateUtils.getLocalizedDateString(crime.date)
             crimeDate.setOnClickListener {
                 findNavController().navigate(
                     CrimeDetailFragmentDirections.selectDate(crime.date)
@@ -172,13 +179,14 @@ class CrimeDetailFragment : Fragment() {
             updatePhoto(crime.photoFileName)
         }
     }
+
     private fun getCrimeReport(crime: Crime): String {
         val solvedString = if (crime.isSolved) {
             getString(R.string.crime_report_solved)
         } else {
             getString(R.string.crime_report_unsolved)
         }
-        val dateString = DateFormat.getDateInstance().format(crime.date).toString()
+        val dateString = DateUtils.getLocalizedDateString(crime.date);
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {

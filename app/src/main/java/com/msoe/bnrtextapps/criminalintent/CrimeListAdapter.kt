@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.msoe.bnrtextapps.criminalintent.DateUtils.Companion.getLocalizedDateString
 import com.msoe.bnrtextapps.criminalintent.databinding.ListItemCrimeBinding
-import java.util.UUID
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
 
 private const val TAG = "CrimeListAdapter"
 
@@ -17,7 +21,7 @@ class CrimeHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(crime: Crime, onCrimeClicked: (crimeId:UUID) -> Unit) {
         binding.crimeTitle.text = crime.title
-        binding.crimeDate.text = crime.date.toString()
+        binding.crimeDate.text = getLocalizedDateString(crime.date)
 
         binding.root.setOnClickListener {
             onCrimeClicked(crime.id)
