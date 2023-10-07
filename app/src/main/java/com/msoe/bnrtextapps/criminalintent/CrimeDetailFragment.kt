@@ -22,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.ActivityNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.msoe.bnrtextapps.criminalintent.PictureUtils.Companion.getScaledBitmap
 import com.msoe.bnrtextapps.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.io.File
